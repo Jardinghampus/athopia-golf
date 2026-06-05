@@ -15,10 +15,143 @@
 
 :root {
   --golf-primary: #BA7517;
+
+  /* Nyheter design tokens */
+  --canvas:         #ffffff;
+  --surface-soft:   #f7f5f2;
+  --surface-card:   #ffffff;
+  --surface-amber:  #fdf6ec;
+  --surface-dark:   #1a1814;
+  --text-primary:   #0f0f0e;
+  --text-body:      #3d3a34;
+  --text-muted:     #8a8070;
+  --text-faint:     #b8b0a4;
+  --amber-vivid:    #BA7517;
+  --amber-light:    #EF9F27;
+  --amber-pale:     #FAC775;
+  --amber-wash:     #fdf0db;
+  --amber-dark:     #633806;
+  --border-default: #e8e4de;
+  --border-strong:  #c8c0b4;
+  --font-display:   'Cormorant Garamond', 'Georgia', serif;
+  --font-label:     'DM Mono', 'JetBrains Mono', monospace;
+  --font-body:      'DM Sans', system-ui, sans-serif;
+  --radius-card:    16px;
+  --radius-pill:    9999px;
+  --radius-thumb:   12px;
 }
 
 body {
   background-color: #0A0A08;
   color: #F5F0E8;
   font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Nyheter page layout ── */
+.nyheter-page {
+  background: #ffffff;
+  min-height: 100vh;
+  position: relative;
+}
+
+.dot-grid-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(circle, #c8c0b4 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.35;
+}
+
+.page-header {
+  padding: 28px 20px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-top: 12px;
+}
+
+.title-dark  { color: #0f0f0e; }
+.title-muted { color: #8a8070; }
+
+.section-padding {
+  padding: 0 20px 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.carousel-section {
+  padding: 0 20px 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.article-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.compact-list {
+  margin-top: 14px;
+  border: 1px solid var(--border-default, #e8e4de);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.list-divider {
+  height: 1px;
+  background: var(--border-default, #e8e4de);
+  margin: 0;
+}
+
+.load-more-wrap {
+  padding: 4px 20px 40px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.load-more-btn {
+  padding: 12px 32px;
+  border-radius: 9999px;
+  border: 1px solid #0f0f0e;
+  background: transparent;
+  font-family: var(--font-label, 'DM Mono', monospace);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0f0f0e;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.load-more-btn:hover {
+  background: #0f0f0e;
+  color: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .page-title       { font-size: 56px; }
+  .article-grid     { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .section-padding  { padding: 0 32px 36px; }
+  .page-header      { padding: 36px 32px 24px; }
+  .carousel-section { padding: 0 32px 12px; }
+}
+
+@media (min-width: 1024px) {
+  .page-title      { font-size: 64px; letter-spacing: -1.92px; }
+  .article-grid    { grid-template-columns: repeat(4, 1fr); }
+  .section-padding { padding: 0 48px 48px; }
 }
