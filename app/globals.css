@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-golf-primary: #BA7517;
+  --color-golf-light: #EF9F27;
+  --color-golf-dark: #633806;
+  --color-golf-muted: #FAC775;
+  --color-bg-base: #0A0A08;
+  --color-text-primary: #F5F0E8;
+  --color-text-muted: #8A8070;
+
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+:root {
+  --golf-primary: #BA7517;
+}
+
+body {
+  background-color: #0A0A08;
+  color: #F5F0E8;
+  font-family: 'DM Sans', sans-serif;
+}
