@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export interface CarouselItem {
   id: string
@@ -58,7 +59,6 @@ export default function TopCarousel({ items }: { items: CarouselItem[] }) {
     return stopAutoplay
   }, [startAutoplay, stopAutoplay])
 
-  // Keyboard nav
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') goTo((active + 1) % items.length)
@@ -68,7 +68,6 @@ export default function TopCarousel({ items }: { items: CarouselItem[] }) {
     return () => window.removeEventListener('keydown', handler)
   }, [active, items.length, goTo])
 
-  // Scroll-sync dots via IntersectionObserver
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
@@ -104,7 +103,7 @@ export default function TopCarousel({ items }: { items: CarouselItem[] }) {
           scrollSnapType: 'x mandatory',
           scrollbarWidth: 'none',
           gap: 0,
-          borderRadius: '16px',
+          borderRadius: 16,
         } as React.CSSProperties}
       >
         {items.map((item, i) => (
@@ -117,8 +116,8 @@ export default function TopCarousel({ items }: { items: CarouselItem[] }) {
               scrollSnapAlign: 'start',
               position: 'relative',
               display: 'block',
-              aspectRatio: '16/9',
-              background: '#f7f5f2',
+              aspectRatio: '3/2',
+              background: '#E6E6DD',
               overflow: 'hidden',
               textDecoration: 'none',
             }}
@@ -135,46 +134,61 @@ export default function TopCarousel({ items }: { items: CarouselItem[] }) {
             ) : (
               <div style={{
                 position: 'absolute', inset: 0,
-                background: 'linear-gradient(135deg, #f7f0e6 0%, #e8ddd0 100%)',
+                background: 'linear-gradient(135deg, #E6E6DD 0%, #EBECEF 100%)',
               }} />
             )}
 
+            {/* Gradient scrim */}
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(to top, rgba(15,15,14,0.88) 0%, rgba(15,15,14,0.25) 55%, transparent 100%)',
+              background: 'linear-gradient(to top, rgba(8,16,12,0.92) 0%, rgba(8,16,12,0.3) 50%, rgba(8,16,12,0.04) 100%)',
             }} />
 
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '20px 20px 16px' }}>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '20px 20px 18px' }}>
               <span style={{
                 display: 'inline-block',
                 padding: '3px 10px',
-                borderRadius: '9999px',
-                background: 'rgba(186,117,23,0.85)',
+                borderRadius: 9999,
+                background: 'rgba(0,66,37,0.85)',
                 fontFamily: "'DM Mono', monospace",
-                fontSize: '10px',
+                fontSize: 10,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
                 color: '#ffffff',
-                marginBottom: '8px',
+                marginBottom: 10,
               }}>
                 {TOUR_LABELS[item.tour] ?? item.tour}
               </span>
-              <h3 style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: 'clamp(20px, 5vw, 28px)',
-                fontWeight: 500,
-                lineHeight: 1.15,
-                letterSpacing: '-0.5px',
-                color: '#ffffff',
-                margin: '0 0 8px',
-              }}>
-                {item.title}
-              </h3>
+
+              {/* Title animates when this slide becomes active */}
+              <AnimatePresence mode="wait" initial={false}>
+                {active === i && (
+                  <motion.h3
+                    key={`title-${item.id}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                    style={{
+                      fontFamily: "'Cormorant Garamond', Georgia, serif",
+                      fontSize: 'clamp(20px, 5.5vw, 30px)',
+                      fontWeight: 500,
+                      lineHeight: 1.15,
+                      letterSpacing: '-0.5px',
+                      color: '#ffffff',
+                      margin: '0 0 10px',
+                    }}
+                  >
+                    {item.title}
+                  </motion.h3>
+                )}
+              </AnimatePresence>
+
               <span style={{
                 fontFamily: "'DM Mono', monospace",
-                fontSize: '11px',
+                fontSize: 11,
                 letterSpacing: '0.04em',
-                color: 'rgba(255,255,255,0.55)',
+                color: 'rgba(255,255,255,0.42)',
               }}>
                 {formatTime(item.published_at)}
               </span>
@@ -183,21 +197,24 @@ export default function TopCarousel({ items }: { items: CarouselItem[] }) {
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', padding: '12px 0 4px' }}>
+      {/* Dot indicators */}
+      <div style={{ display: 'flex', gap: 6, justifyContent: 'center', padding: '12px 0 4px' }}>
         {items.map((_, i) => (
-          <button
+          <motion.button
             key={i}
             onClick={() => goTo(i)}
             aria-label={`Gå till slide ${i + 1}`}
+            animate={{
+              width: active === i ? 22 : 6,
+              background: active === i ? '#004225' : '#A5A9B5',
+            }}
+            transition={{ type: 'spring', stiffness: 400, damping: 32 }}
             style={{
-              width: active === i ? '20px' : '6px',
-              height: '6px',
-              borderRadius: '9999px',
-              background: active === i ? '#BA7517' : '#c8c0b4',
+              height: 6,
+              borderRadius: 9999,
               border: 'none',
               padding: 0,
               cursor: 'pointer',
-              transition: 'all 0.3s ease',
             }}
           />
         ))}

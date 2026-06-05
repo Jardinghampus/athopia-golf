@@ -33,18 +33,20 @@ export default function FilterPills() {
             onClick={() => router.push(f.id === 'all' ? '/nyheter' : `/nyheter?tour=${f.id}`)}
             style={{
               flexShrink: 0,
-              padding: '8px 16px',
+              padding: '11px 18px',
+              minHeight: '44px',
               borderRadius: '9999px',
-              border: `1px solid ${isActive ? '#BA7517' : '#e8e4de'}`,
-              background: isActive ? '#BA7517' : 'transparent',
+              border: `1px solid ${isActive ? '#004225' : '#D4D6DA'}`,
+              background: isActive ? '#004225' : 'transparent',
               fontFamily: "'DM Mono', monospace",
               fontSize: '12px',
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
-              color: isActive ? '#ffffff' : '#3d3a34',
+              color: isActive ? '#ffffff' : '#2A3028',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
               transition: 'all 0.15s ease',
+              outline: 'none',
             }}
           >
             {f.label}

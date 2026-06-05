@@ -16,7 +16,7 @@ export default function MobileNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[rgba(186,117,23,0.18)] backdrop-blur-md bg-[rgba(10,10,8,0.92)]">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[rgba(0,66,37,0.18)] backdrop-blur-md bg-[rgba(8,16,12,0.94)]">
       <div className="flex">
         {tabs.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
@@ -28,16 +28,16 @@ export default function MobileNav() {
             >
               <Icon
                 size={20}
-                className={active ? 'text-[#EF9F27]' : 'text-[#8A8070]'}
+                className={active ? 'text-[#4CAF7E]' : 'text-[#A5A9B5]'}
                 strokeWidth={active ? 2 : 1.5}
               />
               <span
-                className={`text-[10px] ${active ? 'text-[#EF9F27]' : 'text-[#8A8070]'}`}
+                className={`text-[10px] ${active ? 'text-[#4CAF7E]' : 'text-[#A5A9B5]'}`}
               >
                 {label}
               </span>
               {active && (
-                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-[#EF9F27]" />
+                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-[#4CAF7E]" />
               )}
             </Link>
           )

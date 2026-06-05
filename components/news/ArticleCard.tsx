@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 
 const TOUR_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  pga_tour:      { bg: '#fdf0db', color: '#BA7517', label: 'PGA Tour' },
-  european_tour: { bg: '#e8f0ff', color: '#1a5fa8', label: 'DP World' },
-  liv_golf:      { bg: '#fdf0db', color: '#BA7517', label: 'LIV Golf' },
-  swedish:       { bg: '#e8f7ef', color: '#1a7a3e', label: 'Sverige' },
+  pga_tour:      { bg: 'rgba(0,66,37,0.08)', color: '#004225', label: 'PGA Tour' },
+  european_tour: { bg: '#EBECEF',            color: '#5B6478', label: 'DP World' },
+  liv_golf:      { bg: '#E6E6DD',            color: '#4A524A', label: 'LIV Golf' },
+  swedish:       { bg: 'rgba(0,66,37,0.08)', color: '#004225', label: 'Sverige'  },
 }
 
 export interface NormalizedArticle {
@@ -25,106 +26,226 @@ export interface NormalizedArticle {
 interface ArticleCardProps {
   article: NormalizedArticle
   size?: 'featured' | 'standard' | 'compact'
+  index?: number
 }
 
-export default function ArticleCard({ article, size = 'standard' }: ArticleCardProps) {
-  const tour = TOUR_STYLE[article.tour] ?? { bg: '#f7f5f2', color: '#8a8070', label: article.tour }
+const springPress = { type: 'spring', stiffness: 500, damping: 38 } as const
+const springHover = { type: 'spring', stiffness: 380, damping: 32 } as const
+
+export default function ArticleCard({ article, size = 'standard', index = 0 }: ArticleCardProps) {
+  const tour = TOUR_STYLE[article.tour] ?? { bg: '#EBECEF', color: '#6B707C', label: article.tour }
 
   if (size === 'compact') {
     return (
-      <Link
-        href={`/nyheter/${article.slug}`}
-        style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '16px 20px', textDecoration: 'none', background: '#ffffff', transition: 'background 0.15s' }}
-        onMouseEnter={e => (e.currentTarget.style.background = '#fdf9f5')}
-        onMouseLeave={e => (e.currentTarget.style.background = '#ffffff')}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1], delay: index * 0.06 }}
+        whileTap={{ scale: 0.985, transition: springPress }}
       >
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px' }}>
-            <TourBadge tour={tour} />
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', letterSpacing: '0.04em', color: '#b8b0a4' }}>
-              {formatTime(article.published_at)}
-            </span>
+        <Link
+          href={`/nyheter/${article.slug}`}
+          style={{
+            display: 'flex', alignItems: 'flex-start', gap: 12,
+            padding: '16px 20px',
+            textDecoration: 'none',
+            background: '#ffffff',
+            transition: 'background 0.15s',
+            outline: 'none',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = '#F7F8F8')}
+          onMouseLeave={e => (e.currentTarget.style.background = '#ffffff')}
+        >
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+              <TourBadge tour={tour} />
+              <span style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: 10,
+                letterSpacing: '0.04em',
+                color: '#6B707C',
+              }}>
+                {formatTime(article.published_at)}
+              </span>
+            </div>
+            <h3 style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 17,
+              fontWeight: 500,
+              lineHeight: 1.3,
+              letterSpacing: '-0.2px',
+              color: '#0A1410',
+              margin: 0,
+            }}>
+              {article.title}
+            </h3>
           </div>
-          <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '17px', fontWeight: 500, lineHeight: 1.3, letterSpacing: '-0.2px', color: '#0f0f0e', margin: 0 }}>
-            {article.title}
-          </h3>
-        </div>
-        {article.is_ai_summary && <AIBadge small />}
-      </Link>
+          {article.is_ai_summary && <AIBadge small />}
+        </Link>
+      </motion.div>
     )
   }
 
   if (size === 'featured') {
     return (
-      <Link
-        href={`/nyheter/${article.slug}`}
-        style={{ display: 'flex', gap: '16px', padding: '20px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e8e4de', textDecoration: 'none', transition: 'all 0.18s ease', marginTop: '14px' }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = '#FAC775' }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = '#e8e4de' }}
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        whileHover={{ y: -3, transition: springHover }}
+        whileTap={{ scale: 0.98, transition: springPress }}
+        style={{ marginTop: 14 }}
       >
-        <div style={{ flexShrink: 0, width: '120px', height: '120px', borderRadius: '12px', overflow: 'hidden', background: '#f7f5f2' }}>
-          {article.image_url && (
-            <Image src={article.image_url} alt="" width={120} height={120} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
-          )}
-        </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div>
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-              <TourBadge tour={tour} />
-              {article.is_ai_summary && <AIBadge />}
-            </div>
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '22px', fontWeight: 500, lineHeight: 1.25, letterSpacing: '-0.4px', color: '#0f0f0e', margin: '0 0 6px' }}>
-              {article.title}
-            </h3>
-            {article.excerpt && (
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '14px', lineHeight: 1.5, color: '#8a8070', margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as React.CSSProperties}>
-                {article.excerpt}
-              </p>
+        <Link
+          href={`/nyheter/${article.slug}`}
+          style={{
+            display: 'flex', gap: 16,
+            padding: 20,
+            background: '#ffffff',
+            borderRadius: 16,
+            border: '1px solid #D4D6DA',
+            textDecoration: 'none',
+            transition: 'border-color 0.18s ease, box-shadow 0.18s ease',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = '#004225'
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,66,37,0.1)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = '#D4D6DA'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
+        >
+          <div style={{
+            flexShrink: 0,
+            width: 120, height: 120,
+            borderRadius: 12,
+            overflow: 'hidden',
+            background: '#EBECEF',
+          }}>
+            {article.image_url && (
+              <Image
+                src={article.image_url}
+                alt=""
+                width={120} height={120}
+                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+              />
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: '#b8b0a4' }}>{article.source}</span>
-            <span style={{ color: '#e8e4de' }}>·</span>
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: '#b8b0a4' }}>{formatTime(article.published_at)}</span>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                <TourBadge tour={tour} />
+                {article.is_ai_summary && <AIBadge />}
+              </div>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 22, fontWeight: 500,
+                lineHeight: 1.25, letterSpacing: '-0.4px',
+                color: '#0A1410', margin: '0 0 6px',
+              }}>
+                {article.title}
+              </h3>
+              {article.excerpt && (
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14, lineHeight: 1.5, color: '#6B707C', margin: 0,
+                  display: '-webkit-box', WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                } as React.CSSProperties}>
+                  {article.excerpt}
+                </p>
+              )}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#6B707C' }}>{article.source}</span>
+              <span style={{ color: '#D4D6DA' }}>·</span>
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#6B707C' }}>{formatTime(article.published_at)}</span>
+            </div>
           </div>
-        </div>
-      </Link>
+        </Link>
+      </motion.div>
     )
   }
 
+  // standard
   return (
-    <Link
-      href={`/nyheter/${article.slug}`}
-      style={{ display: 'flex', flexDirection: 'column', background: '#ffffff', borderRadius: '16px', border: '1px solid #e8e4de', textDecoration: 'none', overflow: 'hidden', transition: 'all 0.18s ease' }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = '#FAC775' }}
-      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = '#e8e4de' }}
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1], delay: index * 0.07 }}
+      whileHover={{ y: -3, transition: springHover }}
+      whileTap={{ scale: 0.97, transition: springPress }}
     >
-      <div style={{ aspectRatio: '16/9', background: '#f7f5f2', overflow: 'hidden', position: 'relative' }}>
-        {article.image_url ? (
-          <Image src={article.image_url} alt="" fill style={{ objectFit: 'cover' }} />
-        ) : (
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #f7f0e6 0%, #e8ddd0 100%)' }} />
-        )}
-        {article.is_ai_summary && (
-          <div style={{ position: 'absolute', top: '10px', left: '10px' }}><AIBadge /></div>
-        )}
-      </div>
-      <div style={{ padding: '14px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ marginBottom: '8px' }}><TourBadge tour={tour} /></div>
-        <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '20px', fontWeight: 500, lineHeight: 1.25, letterSpacing: '-0.3px', color: '#0f0f0e', margin: '0 0 auto', flexGrow: 1 }}>
-          {article.title}
-        </h3>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: '#b8b0a4', marginTop: '12px', display: 'block' }}>
-          {formatTime(article.published_at)}
-        </span>
-      </div>
-    </Link>
+      <Link
+        href={`/nyheter/${article.slug}`}
+        style={{
+          display: 'flex', flexDirection: 'column',
+          background: '#ffffff',
+          borderRadius: 16,
+          border: '1px solid #D4D6DA',
+          textDecoration: 'none',
+          overflow: 'hidden',
+          transition: 'border-color 0.18s ease, box-shadow 0.18s ease',
+          height: '100%',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = '#004225'
+          e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,66,37,0.1)'
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = '#D4D6DA'
+          e.currentTarget.style.boxShadow = 'none'
+        }}
+      >
+        <div style={{ aspectRatio: '16/9', background: '#EBECEF', overflow: 'hidden', position: 'relative' }}>
+          {article.image_url ? (
+            <Image src={article.image_url} alt="" fill style={{ objectFit: 'cover' }} />
+          ) : (
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #E6E6DD 0%, #D4D6DA 100%)' }} />
+          )}
+          {article.is_ai_summary && (
+            <div style={{ position: 'absolute', top: 10, left: 10 }}><AIBadge /></div>
+          )}
+        </div>
+        <div style={{ padding: '14px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ marginBottom: 8 }}><TourBadge tour={tour} /></div>
+          <h3 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 20, fontWeight: 500,
+            lineHeight: 1.25, letterSpacing: '-0.3px',
+            color: '#0A1410', margin: '0 0 auto', flexGrow: 1,
+          }}>
+            {article.title}
+          </h3>
+          <span style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 11, color: '#6B707C',
+            marginTop: 12, display: 'block',
+          }}>
+            {formatTime(article.published_at)}
+          </span>
+        </div>
+      </Link>
+    </motion.div>
   )
 }
 
 function TourBadge({ tour }: { tour: { bg: string; color: string; label: string } }) {
   return (
-    <span style={{ padding: '3px 10px', borderRadius: '9999px', background: tour.bg, fontFamily: "'DM Mono', monospace", fontSize: '10px', letterSpacing: '0.06em', textTransform: 'uppercase', color: tour.color }}>
+    <span style={{
+      padding: '3px 10px',
+      borderRadius: 9999,
+      background: tour.bg,
+      fontFamily: "'DM Mono', monospace",
+      fontSize: 10,
+      letterSpacing: '0.06em',
+      textTransform: 'uppercase',
+      color: tour.color,
+    }}>
       {tour.label}
     </span>
   )
@@ -132,7 +253,18 @@ function TourBadge({ tour }: { tour: { bg: string; color: string; label: string 
 
 function AIBadge({ small }: { small?: boolean }) {
   return (
-    <span style={{ padding: small ? '3px 8px' : '3px 10px', borderRadius: '9999px', background: '#fdf0db', border: '1px solid #FAC775', fontFamily: "'DM Mono', monospace", fontSize: small ? '9px' : '10px', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#BA7517', flexShrink: 0 }}>
+    <span style={{
+      padding: small ? '3px 8px' : '3px 10px',
+      borderRadius: 9999,
+      background: 'rgba(0,66,37,0.08)',
+      border: '1px solid rgba(0,66,37,0.2)',
+      fontFamily: "'DM Mono', monospace",
+      fontSize: small ? 9 : 10,
+      letterSpacing: '0.06em',
+      textTransform: 'uppercase',
+      color: '#004225',
+      flexShrink: 0,
+    }}>
       Echo AI
     </span>
   )

@@ -3,7 +3,7 @@ interface EyebrowProps {
   dotColor?: string
 }
 
-export default function SectionEyebrow({ label, dotColor = '#BA7517' }: EyebrowProps) {
+export default function SectionEyebrow({ label, dotColor = '#004225' }: EyebrowProps) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <div
@@ -16,7 +16,7 @@ export default function SectionEyebrow({ label, dotColor = '#BA7517' }: EyebrowP
         fontWeight: 400,
         letterSpacing: '0.12em',
         textTransform: 'uppercase',
-        color: '#0f0f0e',
+        color: '#0A1410',
       }}>
         {label}
       </span>

@@ -1,38 +1,38 @@
 @import "tailwindcss";
 
 @theme {
-  --color-golf-primary: #BA7517;
-  --color-golf-light: #EF9F27;
-  --color-golf-dark: #633806;
-  --color-golf-muted: #FAC775;
-  --color-bg-base: #0A0A08;
+  --color-golf-primary: #004225;
+  --color-golf-light:   #4CAF7E;
+  --color-golf-dark:    #002A18;
+  --color-golf-muted:   #A5A9B5;
+  --color-bg-base:      #08100C;
   --color-text-primary: #F5F0E8;
-  --color-text-muted: #8A8070;
+  --color-text-muted:   #A5A9B5;
 
   --font-display: 'Cormorant Garamond', serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
 }
 
 :root {
-  --golf-primary: #BA7517;
+  --golf-primary: #004225;
 
   /* Nyheter design tokens */
-  --canvas:         #ffffff;
-  --surface-soft:   #f7f5f2;
+  --canvas:         #EBECEF;
+  --surface-soft:   #EBECEF;
   --surface-card:   #ffffff;
-  --surface-amber:  #fdf6ec;
-  --surface-dark:   #1a1814;
-  --text-primary:   #0f0f0e;
-  --text-body:      #3d3a34;
-  --text-muted:     #8a8070;
-  --text-faint:     #b8b0a4;
-  --amber-vivid:    #BA7517;
-  --amber-light:    #EF9F27;
-  --amber-pale:     #FAC775;
-  --amber-wash:     #fdf0db;
-  --amber-dark:     #633806;
-  --border-default: #e8e4de;
-  --border-strong:  #c8c0b4;
+  --surface-warm:   #E6E6DD;
+  --surface-dark:   #091510;
+  --text-primary:   #0A1410;
+  --text-body:      #2A3028;
+  --text-muted:     #6B707C;
+  --text-faint:     #6B707C;
+  --green-vivid:    #004225;
+  --green-mid:      #005A31;
+  --green-light:    #4CAF7E;
+  --green-wash:     rgba(0,66,37,0.07);
+  --green-dark:     #002A18;
+  --border-default: #D4D6DA;
+  --border-strong:  #B8BBC4;
   --font-display:   'Cormorant Garamond', 'Georgia', serif;
   --font-label:     'DM Mono', 'JetBrains Mono', monospace;
   --font-body:      'DM Sans', system-ui, sans-serif;
@@ -42,14 +42,60 @@
 }
 
 body {
-  background-color: #0A0A08;
+  background-color: #08100C;
   color: #F5F0E8;
   font-family: 'DM Sans', sans-serif;
 }
 
+/* ── Shimmer skeleton ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #E0E1E6 0%, #CBCDD4 45%, #E0E1E6 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+.shimmer-warm {
+  background: linear-gradient(90deg, #EBECEF 0%, #D8D9DF 45%, #EBECEF 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+.shimmer-dark {
+  background: linear-gradient(90deg, rgba(0,66,37,0.12) 0%, rgba(0,90,49,0.24) 45%, rgba(0,66,37,0.12) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Landing page hero animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-badge   { animation: fadeInUp 0.6s cubic-bezier(0.23,1,0.32,1) 0.05s both; }
+.hero-h1      { animation: fadeInUp 0.65s cubic-bezier(0.23,1,0.32,1) 0.18s both; }
+.hero-body    { animation: fadeInUp 0.65s cubic-bezier(0.23,1,0.32,1) 0.3s both; }
+.hero-ctas    { animation: fadeInUp 0.65s cubic-bezier(0.23,1,0.32,1) 0.42s both; }
+.features-in  { animation: fadeInUp 0.65s cubic-bezier(0.23,1,0.32,1) 0.55s both; }
+
+/* Focus ring — all interactive elements */
+:focus-visible {
+  outline: 2px solid #004225;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Respect prefers-reduced-motion for CSS transitions */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.001ms !important;
+  }
+}
+
 /* ── Nyheter page layout ── */
 .nyheter-page {
-  background: #ffffff;
+  background: #EBECEF;
   min-height: 100vh;
   position: relative;
 }
@@ -59,9 +105,9 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: radial-gradient(circle, #c8c0b4 1px, transparent 1px);
+  background-image: radial-gradient(circle, #A5A9B5 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.35;
+  opacity: 0.28;
 }
 
 .page-header {
@@ -79,8 +125,8 @@ body {
   margin-top: 12px;
 }
 
-.title-dark  { color: #0f0f0e; }
-.title-muted { color: #8a8070; }
+.title-dark  { color: #0A1410; }
+.title-muted { color: #6B707C; }
 
 .section-padding {
   padding: 0 20px 28px;
@@ -103,7 +149,7 @@ body {
 
 .compact-list {
   margin-top: 14px;
-  border: 1px solid var(--border-default, #e8e4de);
+  border: 1px solid var(--border-default, #D4D6DA);
   border-radius: 16px;
   overflow: hidden;
   background: #ffffff;
@@ -111,7 +157,7 @@ body {
 
 .list-divider {
   height: 1px;
-  background: var(--border-default, #e8e4de);
+  background: var(--border-default, #D4D6DA);
   margin: 0;
 }
 
@@ -126,19 +172,19 @@ body {
 .load-more-btn {
   padding: 12px 32px;
   border-radius: 9999px;
-  border: 1px solid #0f0f0e;
+  border: 1px solid #004225;
   background: transparent;
   font-family: var(--font-label, 'DM Mono', monospace);
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0f0f0e;
+  color: #004225;
   cursor: pointer;
   transition: all 0.18s ease;
 }
 
 .load-more-btn:hover {
-  background: #0f0f0e;
+  background: #004225;
   color: #ffffff;
 }
 

@@ -5,6 +5,7 @@ import ArticleCard, { type NormalizedArticle } from '@/components/news/ArticleCa
 import AISummaryBanner from '@/components/news/AISummaryBanner'
 import FilterPills from '@/components/news/FilterPills'
 import SectionEyebrow from '@/components/news/SectionEyebrow'
+import AnimatedSection from '@/components/news/AnimatedSection'
 
 export const revalidate = 60
 
@@ -116,40 +117,40 @@ export default async function NyheterPage({
       </Suspense>
 
       {summary && (
-        <section className="section-padding">
+        <AnimatedSection className="section-padding" delay={0.05}>
           <AISummaryBanner summary={summary} />
-        </section>
+        </AnimatedSection>
       )}
 
       {featuredArticle && (
-        <section className="section-padding">
+        <AnimatedSection className="section-padding" delay={0.1}>
           <SectionEyebrow label="Featured" />
           <ArticleCard article={featuredArticle} size="featured" />
-        </section>
+        </AnimatedSection>
       )}
 
       {gridArticles.length > 0 && (
-        <section className="section-padding">
+        <AnimatedSection className="section-padding" delay={0.15}>
           <div className="article-grid">
-            {gridArticles.map(article => (
-              <ArticleCard key={article.id} article={article} size="standard" />
+            {gridArticles.map((article, i) => (
+              <ArticleCard key={article.id} article={article} size="standard" index={i} />
             ))}
           </div>
-        </section>
+        </AnimatedSection>
       )}
 
       {listArticles.length > 0 && (
-        <section className="section-padding">
+        <AnimatedSection className="section-padding" delay={0.2}>
           <SectionEyebrow label="Senaste från tour" />
           <div className="compact-list">
             {listArticles.map((article, i) => (
               <div key={article.id}>
-                <ArticleCard article={article} size="compact" />
+                <ArticleCard article={article} size="compact" index={i} />
                 {i < listArticles.length - 1 && <div className="list-divider" aria-hidden="true" />}
               </div>
             ))}
           </div>
-        </section>
+        </AnimatedSection>
       )}
 
       <div className="load-more-wrap">
