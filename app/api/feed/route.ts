@@ -15,20 +15,21 @@ export async function GET(req: NextRequest) {
   if (type === 'all' || type === 'news') {
     const { data } = await supabaseAdmin
       .from('articles')
-      .select('id, title, excerpt, source, sport, created_at')
+      .select('id, title, summary, source_name, sport, published_at')
       .eq('sport', sport)
-      .order('created_at', { ascending: false })
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
       .limit(limit)
 
     for (const a of data ?? []) {
       items.push({
-        id: a.id,
+        id: a.id as string,
         type: 'news',
-        title: a.title,
-        excerpt: a.excerpt ?? null,
-        source: a.source ?? null,
-        sport: a.sport,
-        created_at: a.created_at,
+        title: a.title as string,
+        excerpt: (a.summary as string | null) ?? null,
+        source: (a.source_name as string | null) ?? null,
+        sport: (a.sport as string) ?? sport,
+        created_at: (a.published_at as string) ?? '',
       })
     }
   }
@@ -36,20 +37,19 @@ export async function GET(req: NextRequest) {
   if (type === 'all' || type === 'forum') {
     const { data } = await supabaseAdmin
       .from('forum_threads')
-      .select('id, title, content, sport, created_at')
-      .eq('sport', sport)
+      .select('id, title, content, created_at')
       .order('created_at', { ascending: false })
       .limit(limit)
 
     for (const t of data ?? []) {
       items.push({
-        id: t.id,
+        id: t.id as string,
         type: 'forum',
-        title: t.title,
-        excerpt: t.content?.slice(0, 160) ?? null,
+        title: t.title as string,
+        excerpt: ((t.content as string | null) ?? '').slice(0, 160) || null,
         source: null,
-        sport: t.sport,
-        created_at: t.created_at,
+        sport,
+        created_at: t.created_at as string,
       })
     }
   }
