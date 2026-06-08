@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { useUser } from '@clerk/nextjs'
+import { useUserPrefs } from '@/context/UserPrefsContext'
 import { supabase, SPORT } from '@/lib/supabase'
 
 export default function NyTraadPage() {
-  const { user } = useUser()
+  const { prefs, hasSetup } = useUserPrefs()
   const router = useRouter()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -16,15 +16,17 @@ export default function NyTraadPage() {
   const [error, setError] = useState('')
 
   async function handleSubmit() {
-    if (!title.trim() || !content.trim() || !user) return
+    if (!title.trim() || !content.trim() || !hasSetup) return
     setSubmitting(true)
     setError('')
+
+    const authorName = prefs.favoritePlayers[0] ?? 'Anonym'
 
     const { error: err } = await supabase.from('forum_threads').insert({
       title: title.trim(),
       content: content.trim(),
-      author_id: user.id,
-      author_name: user.fullName ?? user.username ?? 'Anonym',
+      author_id: prefs.userId,
+      author_name: authorName,
       sport: SPORT,
     })
 
@@ -84,7 +86,7 @@ export default function NyTraadPage() {
           </Link>
           <button
             onClick={handleSubmit}
-            disabled={submitting || !title.trim() || !content.trim()}
+            disabled={submitting || !title.trim() || !content.trim() || !hasSetup}
             className="flex-1 py-3 rounded-full bg-[#BA7517] text-[#0A0A08] text-sm font-medium hover:bg-[#EF9F27] disabled:opacity-40 transition-colors"
           >
             {submitting ? 'Publicerar...' : 'Publicera'}

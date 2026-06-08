@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { SignInButton, UserButton, useAuth } from '@clerk/nextjs'
-import { Menu, X } from 'lucide-react'
+import { useUserPrefs } from '@/context/UserPrefsContext'
+import { Menu, X, User } from 'lucide-react'
 import { useState } from 'react'
 
 const navLinks = [
@@ -15,8 +15,10 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname()
-  const { isSignedIn } = useAuth()
+  const { hasSetup, prefs } = useUserPrefs()
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  const favPlayer = prefs.favoritePlayers[0] ?? null
 
   return (
     <header className="sticky top-0 z-50 border-b border-[rgba(0,66,37,0.18)] backdrop-blur-md bg-[rgba(8,16,12,0.88)]">
@@ -54,21 +56,23 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          {!isSignedIn && (
-            <SignInButton mode="modal">
-              <button className="text-sm px-4 py-1.5 rounded-full border border-[rgba(0,66,37,0.4)] text-[#4CAF7E] hover:bg-[rgba(0,66,37,0.15)] transition-colors">
-                Logga in
-              </button>
-            </SignInButton>
-          )}
-          {isSignedIn && (
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: 'w-8 h-8',
-                },
-              }}
-            />
+          {hasSetup ? (
+            <Link
+              href="/onboarding"
+              className="flex items-center gap-2 text-sm px-3 py-1.5 rounded-full border border-[rgba(0,66,37,0.4)] text-[#4CAF7E] hover:bg-[rgba(0,66,37,0.15)] transition-colors"
+            >
+              <User size={14} />
+              <span className="hidden sm:inline truncate max-w-[120px]">
+                {favPlayer ?? 'Min spelare'}
+              </span>
+            </Link>
+          ) : (
+            <Link
+              href="/onboarding"
+              className="text-sm px-4 py-1.5 rounded-full border border-[rgba(0,66,37,0.4)] text-[#4CAF7E] hover:bg-[rgba(0,66,37,0.15)] transition-colors"
+            >
+              Välj spelare
+            </Link>
           )}
           <button
             className="md:hidden text-[#A5A9B5] hover:text-[#F5F0E8]"

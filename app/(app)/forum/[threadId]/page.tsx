@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Send } from 'lucide-react'
-import { useUser } from '@clerk/nextjs'
+import { useUserPrefs } from '@/context/UserPrefsContext'
 import { supabase } from '@/lib/supabase'
 
 interface Thread {
@@ -32,7 +32,7 @@ function timeAgo(dateStr: string) {
 
 export default function ThreadPage() {
   const { threadId } = useParams<{ threadId: string }>()
-  const { user, isSignedIn } = useUser()
+  const { prefs, hasSetup } = useUserPrefs()
   const [thread, setThread] = useState<Thread | null>(null)
   const [replies, setReplies] = useState<Reply[]>([])
   const [reply, setReply] = useState('')
@@ -53,15 +53,23 @@ export default function ThreadPage() {
   }, [threadId])
 
   async function handleReply() {
-    if (!reply.trim() || !user) return
+    if (!reply.trim() || !hasSetup) return
     setSubmitting(true)
+
+    const authorName = prefs.favoritePlayers[0] ?? 'Anonym'
+
     await supabase.from('forum_replies').insert({
       thread_id: threadId,
       content: reply.trim(),
-      author_id: user.id,
-      author_name: user.fullName ?? user.username ?? 'Anonym',
+      author_id: prefs.userId,
+      author_name: authorName,
     })
-    const { data } = await supabase.from('forum_replies').select('*').eq('thread_id', threadId).order('created_at')
+
+    const { data } = await supabase
+      .from('forum_replies')
+      .select('*')
+      .eq('thread_id', threadId)
+      .order('created_at')
     setReplies(data ?? [])
     setReply('')
     setSubmitting(false)
@@ -106,7 +114,7 @@ export default function ThreadPage() {
         ))}
       </div>
 
-      {isSignedIn ? (
+      {hasSetup ? (
         <div className="flex gap-2">
           <textarea
             value={reply}
@@ -125,7 +133,7 @@ export default function ThreadPage() {
         </div>
       ) : (
         <div className="text-center py-4 text-sm text-[#8A8070]">
-          <Link href="/sign-in" className="text-[#BA7517] hover:text-[#EF9F27]">Logga in</Link> för att svara.
+          <Link href="/onboarding" className="text-[#BA7517] hover:text-[#EF9F27]">Välj din spelare</Link> för att svara.
         </div>
       )}
     </div>

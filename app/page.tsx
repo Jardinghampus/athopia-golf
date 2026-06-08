@@ -1,10 +1,8 @@
 import Link from 'next/link'
-import { auth } from '@clerk/nextjs/server'
 import { Sparkles, BarChart3, Trophy, ChevronRight } from 'lucide-react'
 
-export default async function LandingPage() {
-  const { userId } = await auth()
-  const isSignedIn = !!userId
+export default function LandingPage() {
+  const isSignedIn = false
 
   return (
     <div style={{ minHeight: '100vh', background: '#08100C', color: '#F5F0E8', overflowX: 'hidden' }}>

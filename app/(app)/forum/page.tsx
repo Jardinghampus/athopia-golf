@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { MessageSquare, Plus } from 'lucide-react'
-import { useUser } from '@clerk/nextjs'
+import { useUserPrefs } from '@/context/UserPrefsContext'
 import { supabase, SPORT } from '@/lib/supabase'
 
 interface Thread {
@@ -24,7 +24,7 @@ function timeAgo(dateStr: string) {
 }
 
 export default function ForumPage() {
-  const { isSignedIn } = useUser()
+  const { hasSetup } = useUserPrefs()
   const [threads, setThreads] = useState<Thread[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -51,7 +51,7 @@ export default function ForumPage() {
         >
           Forum
         </h1>
-        {isSignedIn && (
+        {hasSetup && (
           <Link
             href="/forum/ny"
             className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-full bg-[#BA7517] text-[#0A0A08] hover:bg-[#EF9F27] transition-colors font-medium"

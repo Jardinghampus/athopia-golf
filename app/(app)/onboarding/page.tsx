@@ -1,12 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
+import { useUserPrefs } from '@/context/UserPrefsContext'
 import { Check } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import type { GolfPlayer } from '@/types/golf'
-import { useEffect } from 'react'
 
 const tourOptions = [
   { value: 'pga_tour', label: 'PGA Tour', desc: 'Världens bästa spelarbana' },
@@ -22,17 +21,20 @@ const notifOptions = [
 ]
 
 export default function OnboardingPage() {
-  const { user } = useUser()
+  const { updatePrefs } = useUserPrefs()
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [players, setPlayers] = useState<GolfPlayer[]>([])
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([])
   const [selectedTours, setSelectedTours] = useState<string[]>([])
   const [selectedNotifs, setSelectedNotifs] = useState<string[]>(['daily'])
-  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    supabase.from('golf_players').select('*').order('world_ranking', { ascending: true, nullsFirst: false }).then(({ data }) => setPlayers(data ?? []))
+    supabase
+      .from('golf_players')
+      .select('*')
+      .order('world_ranking', { ascending: true, nullsFirst: false })
+      .then(({ data }) => setPlayers(data ?? []))
   }, [])
 
   function togglePlayer(slug: string) {
@@ -53,15 +55,12 @@ export default function OnboardingPage() {
     )
   }
 
-  async function handleFinish() {
-    setSaving(true)
-    await user?.update({
-      unsafeMetadata: {
-        sport: 'golf',
-        favoritePlayers: selectedPlayers,
-        tours: selectedTours,
-        notifications: selectedNotifs,
-      },
+  function handleFinish() {
+    updatePrefs({
+      favoritePlayers: selectedPlayers,
+      tours: selectedTours,
+      notifications: selectedNotifs,
+      hasSetup: true,
     })
     router.push('/feed')
   }
@@ -191,10 +190,9 @@ export default function OnboardingPage() {
               </button>
               <button
                 onClick={handleFinish}
-                disabled={saving}
-                className="flex-1 py-3 rounded-full bg-[#BA7517] text-[#0A0A08] font-medium hover:bg-[#EF9F27] disabled:opacity-50 transition-colors"
+                className="flex-1 py-3 rounded-full bg-[#BA7517] text-[#0A0A08] font-medium hover:bg-[#EF9F27] transition-colors"
               >
-                {saving ? 'Sparar...' : 'Kom igång!'}
+                Kom igång!
               </button>
             </div>
           </>
