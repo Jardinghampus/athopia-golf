@@ -1,4 +1,6 @@
-import { supabaseAdmin, SPORT } from '@/lib/supabase'
+export const dynamic = 'force-dynamic'
+
+import { supabaseAdmin, SPORT, isSupabaseConfigured } from '@/lib/supabase'
 import AISummaryCard from '@/components/AISummaryCard'
 
 interface Report {
@@ -10,13 +12,21 @@ interface Report {
 }
 
 async function getReports(): Promise<Report[]> {
+  if (!isSupabaseConfigured()) return []
   const { data } = await supabaseAdmin
-    .from('agent_reports')
-    .select('id, title, content, generated_at, created_at')
+    .from('articles')
+    .select('id, title, content, created_at')
     .eq('sport', SPORT)
+    .eq('source_name', 'Athopia AI')
     .order('created_at', { ascending: false })
     .limit(10)
-  return data ?? []
+  return (data ?? []).map(a => ({
+    id: a.id,
+    title: a.title,
+    content: a.content ?? '',
+    generated_at: a.created_at,
+    created_at: a.created_at,
+  }))
 }
 
 export default async function SammanfattningPage() {

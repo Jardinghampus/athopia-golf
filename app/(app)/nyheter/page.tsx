@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { Suspense } from 'react'
 import { supabase, SPORT } from '@/lib/supabase'
 import TopCarousel, { type CarouselItem } from '@/components/news/TopCarousel'
